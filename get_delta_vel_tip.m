@@ -2,7 +2,7 @@ function delta_vel = get_delta_vel_tip(x_s, x_d)
 % w,x,y,z
 q_s = [x_s(4) x_s(5) x_s(6) x_s(7)];
 q_d = [x_d(4) x_d(5) x_d(6) x_d(7)];
-q_d = q_d/norm(q_d)
+q_d = q_d/norm(q_d);
 % https://www.mathworks.com/help/aerotbx/ug/quatinv.html
 q_s_inv = [q_s(1), -q_s(2), -q_s(3), -q_s(4)];
 q_s_inv = q_s_inv / (norm(q_s)^2);

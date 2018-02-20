@@ -67,8 +67,11 @@ manipulator_jacobian
 % x y z qi qj qk q0
 x_s = [0.44543, 1.12320, 2.22653, -0.29883, 0.44566, 0.84122,-0.06664]';
 x_d = [0.46320, 1.16402, 2.22058, -0.29301, 0.41901, 0.84979, 0.12817]';
-   
-q_s = [x_s(7) x_s(4) x_s(5) x_s(6)];
+
+x_s_twist = get_twist_from_pose(x_s);
+x_d_twist = get_twist_from_pose(x_d);
+
+% q_s = [x_s(7) x_s(4) x_s(5) x_s(6)];
 q_d = [x_d(7) x_d(4) x_d(5) x_d(6)];
 
 q_s = q_s / norm(q_s);
@@ -90,5 +93,6 @@ delta_theta = 2*acos(delta_q_1);
 delta_omega = delta_quat(2:4)' / sin(delta_theta/2);
 delta_x = x_d(1:3) - x_s(1:3);
 
+delta_omega = delta_omega/norm(delta_omega)
 delta_vel_tip = [delta_x; delta_omega];
 delta_theta_joints = pinv(manipulator_jacobian)*delta_vel_tip
