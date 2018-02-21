@@ -6,38 +6,31 @@ theta_s = [0.1 0.2 0.3 0.4 0.5 0.6 0.7];
 % theta_s = zeros(7,1);
 
 % J1, Z0
-q1 = [0 0 0]';
-omega_1 = [0 0 1]'; 
+q1 = [0 0 0]'; omega_1 = [0 0 1]'; 
 xi_1 = get_xi_from_q_and_omega(q1, omega_1);
 
 % J2, Z1
-q2 = [0 0 0]';
-omega_2 = [0 1 0]'; 
+q2 = [0 0 0]'; omega_2 = [0 1 0]'; 
 xi_2 = get_xi_from_q_and_omega(q2, omega_2);
 
 % J3, Z2
-q3 = [0.045 0 0.550]';
-omega_3 = [0 0 1]'; 
+q3 = [0.045 0 0.550]'; omega_3 = [0 0 1]'; 
 xi_3 = get_xi_from_q_and_omega(q3, omega_3);
 
 % J4, Z3
-q4 = [0.045 0 0.550]';
-omega_4 = [0 1 0]'; 
+q4 = [0.045 0 0.550]'; omega_4 = [0 1 0]'; 
 xi_4 = get_xi_from_q_and_omega(q4, omega_4);
 
 % J5, Z4
-q5 = [0 0 0.850]';
-omega_5 = [0 0 1]'; 
+q5 = [0 0 0.850]'; omega_5 = [0 0 1]'; 
 xi_5 = get_xi_from_q_and_omega(q5, omega_5);
 
 % J6, Z5
-q6 = [0 0 0.850]';
-omega_6 = [0 1 0]'; 
+q6 = [0 0 0.850]'; omega_6 = [0 1 0]'; 
 xi_6 = get_xi_from_q_and_omega(q6, omega_6);
 
 % J7, Z6
-q7 = [0 0 0.910]';
-omega_7 = [0 0 1]';
+q7 = [0 0 0.910]'; omega_7 = [0 0 1]';
 xi_7 = get_xi_from_q_and_omega(q7, omega_7);
 
 % todo this is the marker tip. to include?
@@ -106,4 +99,4 @@ delta_theta_joints'
 % delta_omega = delta_omega/norm(delta_omega)
 % delta_vel_tip = [delta_x; delta_omega];
 
-% delta_theta_joints = pinv(manipulator_jacobian)*delta_vel_tip
+% delta_theta_joints = pinv(manipulator_jacobian)*delta_vel_tipq

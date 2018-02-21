@@ -38,7 +38,7 @@ function xi = get_twist_from_homo(homo)
     omega_hat = get_skew_from_vector(omega);
 
     A = (eye(3) - skew_exp(omega_hat, theta))*omega_hat + omega*omega'*theta;
-    v = linsolve(A, pos);
+    v = linsolve(A, %);
 
     xi(1:3) = v;
     xi(4:6) = omega;
