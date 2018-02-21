@@ -2,7 +2,8 @@
 clear all;
 clc;
 
-theta = [0.1 0.2 0.3 0.4 0.5 0.6 0.7];
+theta_s = [0.1 0.2 0.3 0.4 0.5 0.6 0.7];
+% theta_s = zeros(7,1);
 
 % J1, Z0
 q1 = [0 0 0]';
@@ -57,7 +58,7 @@ for i = 2:size(all_xis,2)
     curr_xi = all_xis(:,i-1);
     next_xi = all_xis(:,i);
     curr_xi_twist = get_skew_from_twist(curr_xi);
-    prod_of_xi_exp = prod_of_xi_exp * expm( curr_xi_twist * theta(i-1) );
+    prod_of_xi_exp = prod_of_xi_exp * expm( curr_xi_twist * theta_s(i-1) );
     manipulator_jacobian = [manipulator_jacobian, get_adjoint_tf(prod_of_xi_exp)*next_xi];
 end
 
@@ -69,30 +70,40 @@ x_s = [0.44543, 1.12320, 2.22653, -0.29883, 0.44566, 0.84122,-0.06664]';
 x_d = [0.46320, 1.16402, 2.22058, -0.29301, 0.41901, 0.84979, 0.12817]';
 
 x_s_twist = get_twist_from_pose(x_s);
+x_s_fk_twist = get_twist_from_homo(forward_kinematics(theta_s));
 x_d_twist = get_twist_from_pose(x_d);
 
+x_curr_twist = x_s_fk_twist;%x_s_twist;
+x_curr_homo = forward_kinematics(theta_s);
+theta_curr = theta_s';
+error_twist = x_curr_twist - x_d_twist;
+error_trans = error_twist(1:3) + cross(x_curr_homo(1:3,4), error_twist(4:6));
+error_twist(1:3) = error_trans;
+
+delta_theta_joints = pinv(manipulator_jacobian)*error_twist;
+delta_theta_joints'
 % q_s = [x_s(7) x_s(4) x_s(5) x_s(6)];
-q_d = [x_d(7) x_d(4) x_d(5) x_d(6)];
+% q_d = [x_d(7) x_d(4) x_d(5) x_d(6)];
 
-q_s = q_s / norm(q_s);
-q_d = q_d / norm(q_d);
-% https://www.mathworks.com/help/aerotbx/ug/quatinv.html
-q_s_inv = [q_s(1), -q_s(2), -q_s(3), -q_s(4)];
+% q_s = q_s / norm(q_s);
+% q_d = q_d / norm(q_d);
+% q_s_inv = [q_s(1), -q_s(2), -q_s(3), -q_s(4)];
 
-% relative rotation = q_final * q_initial.inverse
-% https://www.mathworks.com/help/aerotbx/ug/quatmultiply.html
-delta_q_1 = [q_d(1)*q_s_inv(1) - q_d(2)*q_s_inv(2) - q_d(3)*q_s_inv(3) - q_d(4)*q_s_inv(4)];
-delta_q_2 = [q_d(1)*q_s_inv(2) - q_d(2)*q_s_inv(1) - q_d(3)*q_s_inv(4) - q_d(4)*q_s_inv(3)];
-delta_q_3 = [q_d(1)*q_s_inv(3) - q_d(2)*q_s_inv(3) - q_d(3)*q_s_inv(1) - q_d(4)*q_s_inv(2)];
-delta_q_4 = [q_d(1)*q_s_inv(4) - q_d(2)*q_s_inv(2) - q_d(3)*q_s_inv(2) - q_d(4)*q_s_inv(1)];
+% % relative rotation = q_final * q_initial.inverse
+% % https://www.mathworks.com/help/aerotbx/ug/quatmultiply.html
+% delta_q_1 = [q_d(1)*q_s_inv(1) - q_d(2)*q_s_inv(2) - q_d(3)*q_s_inv(3) - q_d(4)*q_s_inv(4)];
+% delta_q_2 = [q_d(1)*q_s_inv(2) - q_d(2)*q_s_inv(1) - q_d(3)*q_s_inv(4) - q_d(4)*q_s_inv(3)];
+% delta_q_3 = [q_d(1)*q_s_inv(3) - q_d(2)*q_s_inv(3) - q_d(3)*q_s_inv(1) - q_d(4)*q_s_inv(2)];
+% delta_q_4 = [q_d(1)*q_s_inv(4) - q_d(2)*q_s_inv(2) - q_d(3)*q_s_inv(2) - q_d(4)*q_s_inv(1)];
 
-delta_quat = [delta_q_1, delta_q_2, delta_q_3, delta_q_4];
-delta_quat = delta_quat / norm(delta_quat);
-delta_theta = 2*acos(delta_q_1);
+% delta_quat = [delta_q_1, delta_q_2, delta_q_3, delta_q_4];
+% delta_quat = delta_quat / norm(delta_quat);
+% delta_theta = 2*acos(delta_q_1);
 
-delta_omega = delta_quat(2:4)' / sin(delta_theta/2);
-delta_x = x_d(1:3) - x_s(1:3);
+% delta_omega = delta_quat(2:4)' / sin(delta_theta/2);
+% delta_x = x_d(1:3) - x_s(1:3);
 
-delta_omega = delta_omega/norm(delta_omega)
-delta_vel_tip = [delta_x; delta_omega];
-delta_theta_joints = pinv(manipulator_jacobian)*delta_vel_tip
+% delta_omega = delta_omega/norm(delta_omega)
+% delta_vel_tip = [delta_x; delta_omega];
+
+% delta_theta_joints = pinv(manipulator_jacobian)*delta_vel_tip
